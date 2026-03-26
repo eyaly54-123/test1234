@@ -1,1 +1,1135 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EscapeIQ – חדרי בריחה חכמים</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #050810;
+      --bg2:       #0a0f1e;
+      --neon-blue: #00d4ff;
+      --neon-purple: #a855f7;
+      --neon-pink:  #f059f0;
+      --accent:    #00ffcc;
+      --text:      #e8edf5;
+      --text-dim:  #7889a8;
+      --card-bg:   rgba(12,20,44,0.85);
+      --border:    rgba(0,212,255,0.18);
+      --glow-blue: 0 0 20px rgba(0,212,255,0.4);
+      --glow-purple: 0 0 20px rgba(168,85,247,0.4);
+    }
 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Heebo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ─── GRID BACKGROUND ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── SCANLINE OVERLAY ─── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── AURORA BG ─── */
+    .aurora {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .aurora span {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.25;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .aurora span:nth-child(1) {
+      width: 600px; height: 600px;
+      background: var(--neon-blue);
+      top: -200px; left: -100px;
+      animation-duration: 10s;
+    }
+    .aurora span:nth-child(2) {
+      width: 500px; height: 500px;
+      background: var(--neon-purple);
+      top: 50%; right: -150px;
+      animation-duration: 14s;
+      animation-delay: -5s;
+    }
+    .aurora span:nth-child(3) {
+      width: 400px; height: 400px;
+      background: var(--neon-pink);
+      bottom: -100px; left: 40%;
+      animation-duration: 16s;
+      animation-delay: -8s;
+    }
+    @keyframes drift {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(40px,30px) scale(1.1); }
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px;
+      height: 64px;
+      background: rgba(5,8,16,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+    }
+    .nav-logo span { color: var(--neon-pink); -webkit-text-fill-color: var(--neon-pink); }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--neon-blue); }
+    .btn-nav {
+      padding: 8px 22px;
+      border: 1px solid var(--neon-blue);
+      border-radius: 4px;
+      color: var(--neon-blue) !important;
+      font-family: 'Rajdhani', sans-serif !important;
+      font-weight: 700 !important;
+      font-size: 0.9rem !important;
+      cursor: pointer;
+      transition: all 0.2s !important;
+      background: transparent;
+    }
+    .btn-nav:hover {
+      background: rgba(0,212,255,0.12) !important;
+      box-shadow: var(--glow-blue) !important;
+      color: #fff !important;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 24px 60px;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(0,212,255,0.3);
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--neon-blue);
+      margin-bottom: 28px;
+      background: rgba(0,212,255,0.06);
+      animation: fadeUp 0.8s ease both;
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--neon-blue);
+      box-shadow: 0 0 8px var(--neon-blue);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+
+    .hero-title {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: clamp(2.8rem, 8vw, 6rem);
+      line-height: 1.05;
+      letter-spacing: -1px;
+      animation: fadeUp 0.9s ease 0.1s both;
+    }
+    .hero-title .line1 {
+      display: block;
+      background: linear-gradient(135deg, #fff 30%, var(--neon-blue));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-title .line2 {
+      display: block;
+      background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      filter: drop-shadow(0 0 30px rgba(168,85,247,0.5));
+    }
+
+    .hero-sub {
+      margin-top: 20px;
+      font-size: 1.15rem;
+      color: var(--text-dim);
+      max-width: 560px;
+      line-height: 1.7;
+      animation: fadeUp 1s ease 0.2s both;
+    }
+
+    .hero-cta {
+      margin-top: 44px;
+      display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+      animation: fadeUp 1s ease 0.3s both;
+    }
+    .btn-primary {
+      padding: 14px 36px;
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,212,255,0.35); }
+    .btn-primary:hover::before { opacity: 1; }
+
+    .btn-secondary {
+      padding: 14px 36px;
+      background: transparent;
+      border: 1px solid rgba(168,85,247,0.5);
+      border-radius: 6px;
+      color: var(--neon-purple);
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(168,85,247,0.1);
+      box-shadow: var(--glow-purple);
+      border-color: var(--neon-purple);
+    }
+
+    .hero-stats {
+      margin-top: 64px;
+      display: flex; gap: 48px; flex-wrap: wrap; justify-content: center;
+      animation: fadeUp 1s ease 0.5s both;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--neon-blue), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ─── SECTION ─── */
+    section { position: relative; z-index: 1; }
+    .section-label {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--neon-blue);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    /* ─── PUBLIC ROOM (demo preview) ─── */
+    .demo-section {
+      padding: 80px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .demo-header { text-align: center; margin-bottom: 52px; }
+
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .room-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s;
+      position: relative;
+    }
+    .room-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,212,255,0.15);
+      border-color: rgba(0,212,255,0.4);
+    }
+    .room-thumb {
+      height: 160px;
+      position: relative;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .room-thumb-cyber { background: linear-gradient(135deg, #000a1a 0%, #001a2e 50%, #002240 100%); }
+    .room-thumb-lab   { background: linear-gradient(135deg, #0a001a 0%, #1a0030 50%, #2a0050 100%); }
+    .room-thumb-prison{ background: linear-gradient(135deg, #1a0a00 0%, #2e1500 50%, #402000 100%); }
+    .room-thumb-icon  { font-size: 4rem; filter: drop-shadow(0 0 20px rgba(0,212,255,0.6)); }
+    .room-thumb-label {
+      position: absolute;
+      bottom: 8px; left: 12px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--neon-blue);
+      background: rgba(0,0,0,0.6);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .difficulty {
+      position: absolute;
+      top: 10px; right: 10px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .diff-easy   { background: rgba(0,255,100,0.15); color: #00ff64; border:1px solid rgba(0,255,100,0.3); }
+    .diff-medium { background: rgba(255,200,0,0.15); color: #ffc800; border:1px solid rgba(255,200,0,0.3); }
+    .diff-hard   { background: rgba(255,50,50,0.15); color: #ff3232; border:1px solid rgba(255,50,50,0.3); }
+
+    .room-info { padding: 18px 20px 20px; }
+    .room-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .room-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 14px; }
+    .room-meta {
+      display: flex; gap: 16px; align-items: center;
+      font-size: 0.78rem; color: var(--text-dim);
+    }
+    .room-meta span { display: flex; align-items: center; gap: 5px; }
+    .join-btn {
+      margin-top: 14px;
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(168,85,247,0.1));
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--neon-blue);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .join-btn:hover {
+      background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(168,85,247,0.2));
+      box-shadow: var(--glow-blue);
+    }
+
+    /* ─── LOGIN MODAL ─── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--bg2);
+      border: 1px solid rgba(0,212,255,0.25);
+      border-radius: 16px;
+      padding: 44px 40px;
+      width: 100%; max-width: 420px;
+      position: relative;
+      box-shadow: 0 0 60px rgba(0,212,255,0.15), 0 0 120px rgba(168,85,247,0.1);
+      transform: translateY(20px);
+      transition: transform 0.3s;
+    }
+    .modal-overlay.active .modal { transform: translateY(0); }
+    .modal-close {
+      position: absolute; top: 16px; left: 16px;
+      background: none; border: none; color: var(--text-dim);
+      font-size: 1.3rem; cursor: pointer; line-height: 1;
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .modal-sub { text-align: center; color: var(--text-dim); font-size: 0.9rem; margin-bottom: 28px; }
+
+    .google-btn {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: background 0.2s;
+      margin-bottom: 20px;
+    }
+    .google-btn:hover { background: rgba(255,255,255,0.1); }
+
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px; color: var(--text-dim); font-size: 0.8rem;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1;
+      height: 1px; background: rgba(255,255,255,0.1);
+    }
+
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px; letter-spacing: 0.5px; }
+    .form-input {
+      width: 100%;
+      padding: 11px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'Heebo', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus {
+      border-color: var(--neon-blue);
+      box-shadow: 0 0 0 2px rgba(0,212,255,0.12);
+    }
+    .form-input::placeholder { color: rgba(120,137,168,0.6); }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .submit-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .modal-switch { text-align: center; margin-top: 18px; font-size: 0.85rem; color: var(--text-dim); }
+    .modal-switch a { color: var(--neon-blue); text-decoration: none; cursor: pointer; }
+
+    /* OTP screen */
+    .otp-screen { display: none; }
+    .otp-inputs {
+      display: flex; gap: 10px; justify-content: center;
+      margin: 24px 0;
+    }
+    .otp-input {
+      width: 44px; height: 52px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Orbitron', monospace;
+      font-size: 1.3rem;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .otp-input:focus {
+      border-color: var(--neon-blue);
+      box-shadow: 0 0 0 2px rgba(0,212,255,0.2);
+    }
+    .otp-resend { text-align: center; color: var(--text-dim); font-size: 0.85rem; margin-top: 12px; }
+    .otp-resend a { color: var(--neon-blue); text-decoration: none; cursor: pointer; }
+
+    /* ─── FEATURES ─── */
+    .features-section {
+      padding: 80px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .features-header { text-align: center; margin-bottom: 56px; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 26px;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .feature-card:hover {
+      border-color: rgba(168,85,247,0.4);
+      transform: translateY(-3px);
+    }
+    .feature-icon {
+      font-size: 2.2rem;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 0 12px rgba(168,85,247,0.5));
+    }
+    .feature-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .feature-desc { font-size: 0.87rem; color: var(--text-dim); line-height: 1.6; }
+
+    /* ─── PRICING ─── */
+    .pricing-section {
+      padding: 80px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .pricing-header { text-align: center; margin-bottom: 52px; }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+      align-items: start;
+    }
+    .pricing-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 30px 26px;
+      position: relative;
+      transition: transform 0.25s, border-color 0.25s;
+    }
+    .pricing-card:hover { transform: translateY(-4px); }
+    .pricing-card.popular {
+      border-color: var(--neon-purple);
+      box-shadow: 0 0 30px rgba(168,85,247,0.2);
+    }
+    .popular-badge {
+      position: absolute;
+      top: -12px; right: 50%;
+      transform: translateX(50%);
+      background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+      color: #fff;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 16px;
+      border-radius: 999px;
+    }
+    .plan-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .plan-price {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin: 12px 0 4px;
+    }
+    .plan-price span { font-size: 1rem; opacity: 0.6; }
+    .plan-period { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 20px; }
+    .plan-features { list-style: none; }
+    .plan-features li {
+      padding: 7px 0;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .plan-features li:last-child { border-bottom: none; }
+    .plan-features li::before { content: '▹'; color: var(--neon-blue); font-size: 0.7rem; }
+    .plan-btn {
+      margin-top: 24px;
+      width: 100%;
+      padding: 11px;
+      border-radius: 7px;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .plan-btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+    .plan-btn-outline:hover { border-color: var(--neon-blue); color: var(--neon-blue); }
+    .plan-btn-filled {
+      background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+      border: none;
+      color: #fff;
+    }
+    .plan-btn-filled:hover { box-shadow: 0 6px 24px rgba(168,85,247,0.4); transform: translateY(-1px); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 36px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-brand {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 1rem;
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    footer p { font-size: 0.8rem; color: var(--text-dim); }
+
+    /* ─── TICKER ─── */
+    .ticker-wrap {
+      position: relative; z-index: 1;
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 0;
+      background: rgba(0,212,255,0.03);
+    }
+    .ticker {
+      display: flex; gap: 60px; width: max-content;
+      animation: ticker 30s linear infinite;
+    }
+    .ticker-item {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .ticker-item .dot { color: var(--neon-blue); margin: 0 6px; }
+    @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    /* ─── ANIMS ─── */
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(24px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 600px) {
+      nav { padding: 0 18px; }
+      .nav-links a:not(.btn-nav) { display: none; }
+      .modal { padding: 36px 24px; margin: 0 16px; }
+      .hero-stats { gap: 28px; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- AURORA -->
+<div class="aurora">
+  <span></span><span></span><span></span>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Escape<span>IQ</span></div>
+  <div class="nav-links">
+    <a href="#rooms">חדרים</a>
+    <a href="#features">יכולות</a>
+    <a href="#pricing">מחירים</a>
+    <a href="#" class="btn-nav" onclick="openModal('login')">כניסה</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">
+    <div class="badge-dot"></div>
+    פלטפורמת חדרי הבריחה החכמה
+  </div>
+  <h1 class="hero-title">
+    <span class="line1">ESCAPE</span>
+    <span class="line2">THE LIMITS</span>
+  </h1>
+  <p class="hero-sub">
+    צור חדרי בריחה ממוחשבים, חידונים אינטראקטיביים ומשחקי תחרות — בפלטפורמה אחת חכמה ומעוצבת.
+  </p>
+  <div class="hero-cta">
+    <button class="btn-primary" onclick="openModal('register')">🚀 התחל בחינם</button>
+    <button class="btn-secondary" onclick="document.getElementById('rooms').scrollIntoView({behavior:'smooth'})">👁 צפה בדמו</button>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">12K+</div>
+      <div class="stat-label">חידונים נוצרו</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">48K+</div>
+      <div class="stat-label">שחקנים פעילים</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">99%</div>
+      <div class="stat-label">שביעות רצון</div>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item">חדרי בריחה<span class="dot">◆</span></span>
+    <span class="ticker-item">מצב סייבר<span class="dot">◆</span></span>
+    <span class="ticker-item">מוד המעבדה<span class="dot">◆</span></span>
+    <span class="ticker-item">בריחה מהכלא<span class="dot">◆</span></span>
+    <span class="ticker-item">מכניקת קומבו<span class="dot">◆</span></span>
+    <span class="ticker-item">ליגות XP<span class="dot">◆</span></span>
+    <span class="ticker-item">AI יצירה<span class="dot">◆</span></span>
+    <span class="ticker-item">מדרגי קבוצות<span class="dot">◆</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="ticker-item">חדרי בריחה<span class="dot">◆</span></span>
+    <span class="ticker-item">מצב סייבר<span class="dot">◆</span></span>
+    <span class="ticker-item">מוד המעבדה<span class="dot">◆</span></span>
+    <span class="ticker-item">בריחה מהכלא<span class="dot">◆</span></span>
+    <span class="ticker-item">מכניקת קומבו<span class="dot">◆</span></span>
+    <span class="ticker-item">ליגות XP<span class="dot">◆</span></span>
+    <span class="ticker-item">AI יצירה<span class="dot">◆</span></span>
+    <span class="ticker-item">מדרגי קבוצות<span class="dot">◆</span></span>
+  </div>
+</div>
+
+<!-- PUBLIC ROOMS -->
+<section id="rooms" class="demo-section">
+  <div class="demo-header">
+    <div class="section-label">חדרים ציבוריים</div>
+    <h2 class="section-title">בחר את האתגר שלך</h2>
+  </div>
+  <div class="rooms-grid">
+
+    <div class="room-card">
+      <div class="room-thumb room-thumb-cyber">
+        <div class="room-thumb-icon">💻</div>
+        <div class="room-thumb-label">CYBER MODE</div>
+        <div class="difficulty diff-hard">HARD</div>
+      </div>
+      <div class="room-info">
+        <div class="room-name">מצב הסייבר</div>
+        <div class="room-desc">האתר נפרץ. כל טעות גורמת לאפקט גליץ' על המסך. האם תוכל לשחזר את המערכת?</div>
+        <div class="room-meta">
+          <span>🏆 1,240 XP</span>
+          <span>⏱ 15 דק'</span>
+          <span>👥 23 פעיל</span>
+        </div>
+        <button class="join-btn" onclick="openModal('login')">הצטרף לחדר →</button>
+      </div>
+    </div>
+
+    <div class="room-card">
+      <div class="room-thumb room-thumb-lab">
+        <div class="room-thumb-icon">🧪</div>
+        <div class="room-thumb-label">LAB MODE</div>
+        <div class="difficulty diff-medium">MEDIUM</div>
+      </div>
+      <div class="room-info">
+        <div class="room-name">מוד המעבדה</div>
+        <div class="room-desc">השאלות הן ניסויים. טעות אחת = מבחנה מתפוצצת ועשן מכסה את המסך ל-3 שניות.</div>
+        <div class="room-meta">
+          <span>🏆 880 XP</span>
+          <span>⏱ 12 דק'</span>
+          <span>👥 41 פעיל</span>
+        </div>
+        <button class="join-btn" onclick="openModal('login')">הצטרף לחדר →</button>
+      </div>
+    </div>
+
+    <div class="room-card">
+      <div class="room-thumb room-thumb-prison">
+        <div class="room-thumb-icon">🔒</div>
+        <div class="room-thumb-label">PRISON BREAK</div>
+        <div class="difficulty diff-easy">EASY</div>
+      </div>
+      <div class="room-info">
+        <div class="room-name">בריחה מהכלא</div>
+        <div class="room-desc">כל תשובה נכונה היא שלב בפריצה החוצה. אם הטיימר ייגמר — הסוהרים יתפסו אותך.</div>
+        <div class="room-meta">
+          <span>🏆 560 XP</span>
+          <span>⏱ 8 דק'</span>
+          <span>👥 67 פעיל</span>
+        </div>
+        <button class="join-btn" onclick="openModal('login')">הצטרף לחדר →</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="features-section">
+  <div class="features-header">
+    <div class="section-label">יכולות הפלטפורמה</div>
+    <h2 class="section-title">כלים ברמה אחרת</h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🗺️</div>
+      <div class="feature-title">מפת עלילה</div>
+      <div class="feature-desc">במקום רשימת שאלות, השחקן רואה מפה (טירה / מעבדה). כל תשובה נכונה פותחת דלת לחדר הבא.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">מכניקת קומבו</div>
+      <div class="feature-desc">מד קומבו בצד המסך — ככל שתענה נכון ברציפות, כך תקבל יותר נקודות. מקסימום X2.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <div class="feature-title">יצירה עם AI</div>
+      <div class="feature-desc">תן לבינה המלאכותית ליצור שאלות עבורך — בפרו ומעלה תוכל ליצור פרויקטים שלמים בשניות.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏪</div>
+      <div class="feature-title">חנות תחבולות</div>
+      <div class="feature-desc">קנה רמזים, הקפאת טיימר, X2 נקודות, ואפילו גנוב 25% נקודות מיריב עם אייטם הפריצה.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏆</div>
+      <div class="feature-title">ליגות XP</div>
+      <div class="feature-desc">התחל כ-Noob, עלה ל-Hacker ואז ל-God Mode. השג תארים מיוחדים כמו Master Mind.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎲</div>
+      <div class="feature-title">מוד רנדומלי</div>
+      <div class="feature-desc">אחרי תשובה נכונה בחר מ-3 תיבות — זכה ב-X3 נקודות או קבל עונש. הימור עם כל שאלה.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎨</div>
+      <div class="feature-title">עיצוב מותאם</div>
+      <div class="feature-desc">בחר תמות, צבעים וסגנון לחדר שלך. בחשבון Enterprise תוכל להעלות תמונות ולהטמיע דומיין.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔗</div>
+      <div class="feature-title">שיתוף גמיש</div>
+      <div class="feature-desc">קישור ציבורי, QR, הטמעה באתר חיצוני, ואפילו דומיין מותאם אישית לעסקים.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="pricing-section">
+  <div class="pricing-header">
+    <div class="section-label">תוכניות מחיר</div>
+    <h2 class="section-title">בחר את הרמה שלך</h2>
+  </div>
+  <div class="pricing-grid">
+
+    <div class="pricing-card">
+      <div class="plan-name">FREE</div>
+      <div class="plan-price">$0<span>/חודש</span></div>
+      <div class="plan-period">למתחילים</div>
+      <ul class="plan-features">
+        <li>עד 5 פרויקטים</li>
+        <li>עד 15 שאלות לחידון</li>
+        <li>עד 15 משתתפים</li>
+        <li>קישור ציבורי בלבד</li>
+        <li>תמיכת קהילה</li>
+      </ul>
+      <button class="plan-btn plan-btn-outline" onclick="openModal('register')">התחל עכשיו</button>
+    </div>
+
+    <div class="pricing-card popular">
+      <div class="popular-badge">⭐ הכי פופולרי</div>
+      <div class="plan-name">PRO</div>
+      <div class="plan-price">$7.99<span>/חודש</span></div>
+      <div class="plan-period">ליוצרים רציניים</div>
+      <ul class="plan-features">
+        <li>עד 10 פרויקטים</li>
+        <li>עד 25 שאלות לחידון</li>
+        <li>∞ משתתפים (ראשון)</li>
+        <li>QR + עיצוב מתקדם</li>
+        <li>AI עד 2 פרויקטים</li>
+        <li>אפקטים קוליים עד 5</li>
+      </ul>
+      <button class="plan-btn plan-btn-filled" onclick="openModal('register')">שדרג ל-PRO</button>
+    </div>
+
+    <div class="pricing-card">
+      <div class="plan-name">ULTRA</div>
+      <div class="plan-price">$13.99<span>/חודש</span></div>
+      <div class="plan-period">ללא גבולות</div>
+      <ul class="plan-features">
+        <li>∞ פרויקטים</li>
+        <li>∞ שאלות</li>
+        <li>∞ משתתפים</li>
+        <li>הטמעה באתר חיצוני</li>
+        <li>AI עד 5 פרויקטים</li>
+        <li>אפקטים קוליים עד 15</li>
+      </ul>
+      <button class="plan-btn plan-btn-outline" onclick="openModal('register')">שדרג ל-ULTRA</button>
+    </div>
+
+    <div class="pricing-card">
+      <div class="plan-name">BUSINESS</div>
+      <div class="plan-price">$17.99<span>/חודש</span></div>
+      <div class="plan-period">לארגונים ועסקים</div>
+      <ul class="plan-features">
+        <li>∞ הכל ללא הגבלה</li>
+        <li>דומיין מותאם אישית</li>
+        <li>AI ∞ פרויקטים</li>
+        <li>50 אפקטים קוליים</li>
+        <li>תמיכה עדיפות גבוהה</li>
+        <li>העלאת תמונות רקע</li>
+      </ul>
+      <button class="plan-btn plan-btn-outline" onclick="openModal('register')">צור קשר</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">EscapeIQ</div>
+  <p>© 2025 EscapeIQ. כל הזכויות שמורות.</p>
+  <p style="font-size:0.75rem; color:var(--text-dim)">Powered by Firebase · Vercel · GitHub</p>
+</footer>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="modal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+
+    <!-- LOGIN SCREEN -->
+    <div id="screen-login">
+      <div class="modal-title">ברוך הבא 👋</div>
+      <div class="modal-sub">כנס לחשבון שלך</div>
+
+      <button class="google-btn" onclick="handleGoogle()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        המשך עם Google
+      </button>
+
+      <div class="divider">או עם אימייל</div>
+
+      <div class="form-group">
+        <label class="form-label">אימייל</label>
+        <input class="form-input" type="email" placeholder="you@example.com" id="login-email"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">סיסמה</label>
+        <input class="form-input" type="password" placeholder="••••••••" id="login-pass"/>
+      </div>
+      <button class="submit-btn" onclick="handleLogin()">כניסה</button>
+
+      <div class="modal-switch">
+        אין לך חשבון? <a onclick="switchScreen('register')">הירשם עכשיו</a>
+      </div>
+    </div>
+
+    <!-- REGISTER SCREEN -->
+    <div id="screen-register" style="display:none">
+      <div class="modal-title">יצירת חשבון 🚀</div>
+      <div class="modal-sub">הצטרף לפלטפורמה</div>
+
+      <button class="google-btn" onclick="handleGoogle()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        המשך עם Google
+      </button>
+
+      <div class="divider">או עם אימייל</div>
+
+      <div class="form-group">
+        <label class="form-label">שם מלא</label>
+        <input class="form-input" type="text" placeholder="השם שלך" id="reg-name"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">אימייל</label>
+        <input class="form-input" type="email" placeholder="you@example.com" id="reg-email"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">סיסמה</label>
+        <input class="form-input" type="password" placeholder="לפחות 8 תווים" id="reg-pass"/>
+      </div>
+      <button class="submit-btn" onclick="handleRegister()">יצירת חשבון</button>
+
+      <div class="modal-switch">
+        כבר יש לך חשבון? <a onclick="switchScreen('login')">כניסה</a>
+      </div>
+    </div>
+
+    <!-- OTP SCREEN -->
+    <div id="screen-otp" style="display:none">
+      <div class="modal-title">אימות חשבון 🔐</div>
+      <div class="modal-sub" id="otp-sub">שלחנו קוד ל-6 ספרות לאימייל שלך</div>
+      <div class="otp-inputs">
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" oninput="otpNext(this,0)"/>
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" oninput="otpNext(this,1)"/>
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" oninput="otpNext(this,2)"/>
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" oninput="otpNext(this,3)"/>
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" oninput="otpNext(this,4)"/>
+        <input class="otp-input" maxlength="1" type="text" inputmode="numeric" oninput="otpNext(this,5)"/>
+      </div>
+      <button class="submit-btn" onclick="handleOTP()">אימות</button>
+      <div class="otp-resend">לא קיבלת? <a onclick="resendOTP()">שלח שוב</a></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ─── MODAL ───
+  function openModal(screen) {
+    switchScreen(screen);
+    document.getElementById('modal').classList.add('active');
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('active');
+  }
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modal')) closeModal();
+  }
+  function switchScreen(name) {
+    ['login','register','otp'].forEach(s => {
+      document.getElementById('screen-' + s).style.display = (s === name) ? 'block' : 'none';
+    });
+  }
+
+  // ─── AUTH HANDLERS (stubs — connect Firebase) ───
+  function handleGoogle() {
+    alert('Google Sign-In — חבר את Firebase Authentication');
+  }
+  function handleLogin() {
+    const email = document.getElementById('login-email').value;
+    const pass  = document.getElementById('login-pass').value;
+    if (!email || !pass) { alert('אנא מלא את כל השדות'); return; }
+    // TODO: firebase signInWithEmailAndPassword(auth, email, pass)
+    alert('כניסה בוצעה! (חבר Firebase)');
+    closeModal();
+  }
+  function handleRegister() {
+    const name  = document.getElementById('reg-name').value;
+    const email = document.getElementById('reg-email').value;
+    const pass  = document.getElementById('reg-pass').value;
+    if (!name || !email || !pass) { alert('אנא מלא את כל השדות'); return; }
+    // TODO: firebase createUserWithEmailAndPassword then sendVerificationEmail
+    document.getElementById('otp-sub').textContent = `שלחנו קוד אימות ל-${email}`;
+    switchScreen('otp');
+  }
+  function handleOTP() {
+    const inputs = document.querySelectorAll('.otp-input');
+    const code = [...inputs].map(i => i.value).join('');
+    if (code.length < 6) { alert('אנא הכנס 6 ספרות'); return; }
+    // TODO: verify OTP via Firebase
+    alert(`קוד ${code} אומת! (חבר Firebase)`);
+    closeModal();
+  }
+  function otpNext(el, idx) {
+    if (el.value.length === 1) {
+      const inputs = document.querySelectorAll('.otp-input');
+      if (idx < 5) inputs[idx + 1].focus();
+    }
+  }
+  function resendOTP() {
+    alert('קוד חדש נשלח!');
+  }
+
+  // ─── KEYBOARD ESC ───
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
